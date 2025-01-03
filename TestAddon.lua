@@ -32,13 +32,17 @@ local pixels = {}
 local chunkSize = 100
 local currentPixelIndex = 1
 
+local numPixelsRendered = 0
+
 local function createPixelGridChunk()
     for _ = 1, chunkSize do
         if currentPixelIndex > blocksWide * blocksHigh then
-            print("Created " .. (currentPixelIndex-1) .. " pixels")
+            print("Created " .. numPixelsRendered .. " pixels")
             videoCanvas:SetBackdropColor(0, 0, 0, 1)
             return
         end
+
+        numPixelsRendered = numPixelsRendered + 1
 
         local x = ((currentPixelIndex - 1) % blocksWide) + 1
         local y = math.floor((currentPixelIndex - 1) / blocksWide) + 1
@@ -46,12 +50,14 @@ local function createPixelGridChunk()
         if not pixels[y] then
             pixels[y] = {}
         end
-
-        local pixel = videoCanvas:CreateTexture()
+        
+        local pixel = CreateFrame("Frame", nil, videoCanvas, "BackdropTemplate")
         pixel:SetSize(blockSize, blockSize)
         pixel:SetPoint("TOPLEFT", videoCanvas, "TOPLEFT", (x-1)*blockSize, -(y-1)*blockSize)
-        pixel:SetColorTexture(0, 0, 0, 1)
+        pixel:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+        pixel:SetBackdropColor(0, 0, 0, 1)
         pixels[y][x] = pixel
+        
         currentPixelIndex = currentPixelIndex + 1
     end
 
@@ -145,7 +151,7 @@ local function updateDisplay()
 
             -- render when color changes
             if prevPixelColors[colorIndex] ~= colorKey then
-                pixels[y][x]:SetColorTexture(r, g, b, 1)
+                pixels[y][x]:SetBackdropColor(r, g, b, 1)
                 prevPixelColors[colorIndex] = colorKey
             end
 
@@ -169,7 +175,7 @@ local function resetDisplay()
     
     for y = 1, blocksHigh do
         for x = 1, blocksWide do
-            pixels[y][x]:SetColorTexture(0, 0, 0, 0)
+            pixels[y][x]:SetBackdropColor(0, 0, 0, 0)
         end
     end
 end
@@ -245,7 +251,7 @@ SlashCmdList["STOPVIDEO"] = function(msg)
 
     for y = 1, blocksHigh do
         for x = 1, blocksWide do
-            pixels[y][x]:SetColorTexture(0, 0, 0, 1)
+            pixels[y][x]:SetBackdropColor(0, 0, 0, 1)
         end
     end
 

@@ -2,7 +2,7 @@
 ## Title: TestAddon
 ## Version: 1.0.0
 ## Notes: Does something I guess
-## Author: jamsch
+## Author: trololol
 ## LoadOnDemand: 0
 ## DefaultState: enabled
 
